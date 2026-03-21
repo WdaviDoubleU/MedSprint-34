@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
 import JumpGame from './JumpGame';
 import AeroReps from './AeroReps';
+import RepGotchi from './RepGotchi';
 
 export default function StartExercise({ addPoints }) {
   const [selectedGame, setSelectedGame] = useState(null);
@@ -9,7 +10,7 @@ export default function StartExercise({ addPoints }) {
   const games = [
     { id: 'jump', title: 'Running Challenge', desc: 'Jump over abstract obstacles to the beat of your reps.' },
     { id: 'aero', title: 'Aero Reps', desc: 'Control your altitude. Each successful pass is a rep.' },
-    { id: 3, title: 'HIIT Workout', desc: 'Placeholder description' },
+    { id: 'gotchi', title: 'Rep-o-gotchi', desc: 'Feed your virtual pet with calories from your reps.' },
   ];
 
   if (selectedGame === 'jump') {
@@ -40,6 +41,20 @@ export default function StartExercise({ addPoints }) {
     );
   }
 
+  if (selectedGame === 'gotchi') {
+    return (
+      <div className="w-full flex flex-col items-center animate-fade-in">
+        <button 
+          onClick={() => setSelectedGame(null)}
+          className="mb-8 text-slate-500 hover:text-slate-900 flex items-center gap-2 group transition-colors font-bold"
+        >
+          <span className="group-hover:-translate-x-1 transition-transform">←</span> Back to Menu
+        </button>
+        <RepGotchi addPoints={addPoints} />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl flat-panel p-6 animate-fade-in">
       <h2 className="text-2xl font-bold mb-6">Choose a Game</h2>
@@ -50,6 +65,7 @@ export default function StartExercise({ addPoints }) {
             onClick={() => {
               if (game.id === 'jump') setSelectedGame('jump');
               if (game.id === 'aero') setSelectedGame('aero');
+              if (game.id === 'gotchi') setSelectedGame('gotchi');
             }}
             className="p-5 rounded-2xl border-2 border-slate-100 bg-white flex flex-col items-center hover:border-emerald-500 transition-all cursor-pointer group"
           >

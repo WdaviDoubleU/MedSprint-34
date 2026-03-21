@@ -5,7 +5,8 @@ import { clsx } from 'clsx';
 import './Calendar.css';
 
 export default function Calendar({ data, onDayClick }) {
-  const [selectedYear, setSelectedYear] = useState(2026);
+  const [selectedYear, setSelectedYear] = useState('2026');
+  const isExample = selectedYear === 'Example';
 
   const getPointsClass = (points, date) => {
     if (points > 0) {
@@ -14,19 +15,39 @@ export default function Calendar({ data, onDayClick }) {
       if (points >= 15) return 'level-2';
       return 'level-1';
     }
-    
-    // 0 points
-    if (isPast(date) && !isToday(date)) {
+    // 0 points — only mark red for real (non-example) past days
+    if (!isExample && isPast(date) && !isToday(date)) {
       return 'level-missed';
     }
     return 'level-0';
+  };
+
+  // Deterministic pseudo-random points for 'Example' mode.
+  // Uses a Murmur-style integer hash so every (day, month) pair is unique.
+  const getExamplePoints = (date) => {
+    const day = getDate(date);
+    const month = date.getMonth() + 1;
+    // Mix bits to avoid any visible period
+    let h = day * 374761393 + month * 1013904223;
+    h ^= h >>> 13; h = Math.imul(h, 1540483477);
+    h ^= h >>> 15; h = Math.imul(h, 2246822519);
+    h ^= h >>> 16;
+    const r = Math.abs(h) % 100;
+
+    if (r < 5)  return -1;  // these too should show as missed, not grey
+    if (r < 25) return -1;  // ~25% missed (red)
+    if (r < 45) return 5;   // ~20% Level 1
+    if (r < 65) return 20;  // ~20% Level 2
+    if (r < 85) return 45;  // ~20% Level 3
+    return 70;               // ~15% Level 4
   };
   // Group days into months for the selectedYear (Jan-Dec) with padding 
   const generateMonthlyData = () => {
     const monthlyData = [];
 
     for (let month = 0; month < 12; month++) {
-      const monthDate = startOfMonth(new Date(selectedYear, month, 1));
+      const year = selectedYear === 'Example' ? 2026 : parseInt(selectedYear);
+      const monthDate = startOfMonth(new Date(year, month, 1));
       const monthEnd = endOfMonth(monthDate);
       const days = eachDayOfInterval({ start: monthDate, end: monthEnd });
       
@@ -41,7 +62,7 @@ export default function Calendar({ data, onDayClick }) {
     return monthlyData;
   };
   
-  const years = [2024, 2025, 2026, 2027];
+  const years = ['2024', '2025', '2026', '2027', 'Example'];
 
   const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   const monthlyData = generateMonthlyData();
@@ -65,7 +86,7 @@ export default function Calendar({ data, onDayClick }) {
           <select 
             id="year-select"
             value={selectedYear}
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            onChange={(e) => setSelectedYear(e.target.value)}
             className="bg-slate-800 border-none text-white font-bold py-2 px-4 rounded-lg focus:ring-2 focus:ring-emerald-500 transition-all outline-none"
           >
             {years.map(y => <option key={y} value={y}>{y}</option>)}
@@ -87,8 +108,12 @@ export default function Calendar({ data, onDayClick }) {
                 if (!date) return <div key={`empty-${idx}`} className="calendar-cell-empty" />;
                 
                 const dateStr = format(date, 'yyyy-MM-dd');
-                const points = data[dateStr] || 0;
-                const pointClass = getPointsClass(points, date);
+                const rawPoints = isExample ? getExamplePoints(date) : (data[dateStr] || 0);
+                // -1 is our sentinel for 'missed' in example mode
+                const pointClass = isExample && rawPoints === -1
+                  ? 'level-missed'
+                  : getPointsClass(Math.max(rawPoints, 0), date);
+                const points = Math.max(rawPoints, 0);
                 
                 return (
                   <button

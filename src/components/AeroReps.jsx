@@ -11,8 +11,8 @@ export default function AeroReps({ addPoints }) {
   });
 
   // Game Constants (Tuned for extremely slow play)
-  const GRAVITY = 0.1;
-  const FLAP_STRENGTH = -3.5;
+  const GRAVITY = 0.05;
+  const FLAP_STRENGTH = -2.5;
   const PIPE_SPEED = 1.5;
   const PIPE_SPAWN_RATE = 3000; // 3 seconds between pipes
   const PIPE_GAP = 160; // Huge gap for easy pass
@@ -73,7 +73,7 @@ export default function AeroReps({ addPoints }) {
       const minPipeHeight = 50;
       const maxPipeHeight = canvas.height - PIPE_GAP - minPipeHeight;
       const topHeight = Math.floor(Math.random() * (maxPipeHeight - minPipeHeight + 1)) + minPipeHeight;
-      
+
       pipes.push({
         x: canvas.width,
         topHeight: topHeight,
@@ -89,7 +89,7 @@ export default function AeroReps({ addPoints }) {
 
       // Collision detection
       const birdRect = { x: bird.x + 5, y: bird.y + 5, w: bird.width - 10, h: bird.height - 10 };
-      
+
       // Top pipe
       if (
         birdRect.x < p.x + PIPE_WIDTH &&
@@ -140,7 +140,7 @@ export default function AeroReps({ addPoints }) {
     // Draw Bird (Abstract Square for now, follows JumpGame aesthetic)
     ctx.fillStyle = '#0f172a'; // Slate 900
     ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
-    
+
     // Tiny eye for direction
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(bird.x + bird.width - 8, bird.y + 6, 4, 4);
@@ -152,9 +152,9 @@ export default function AeroReps({ addPoints }) {
       ctx.fillRect(p.x, 0, PIPE_WIDTH, p.topHeight);
       // Bottom pipe
       ctx.fillRect(p.x, p.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - (p.topHeight + PIPE_GAP));
-      
+
       // Pipe caps (Flat design accents)
-      ctx.fillStyle = '#1e293b'; 
+      ctx.fillStyle = '#1e293b';
       ctx.fillRect(p.x - 2, p.topHeight - 15, PIPE_WIDTH + 4, 15);
       ctx.fillRect(p.x - 2, p.topHeight + PIPE_GAP, PIPE_WIDTH + 4, 15);
       ctx.fillStyle = '#334155';
@@ -165,7 +165,7 @@ export default function AeroReps({ addPoints }) {
     cancelAnimationFrame(gameState.current.frameId);
     setIsPlaying(false);
     setIsGameOver(true);
-    
+
     const dateStr = format(new Date(), 'yyyy-MM-dd');
     if (score > 0) {
       addPoints(dateStr, score);
@@ -225,7 +225,7 @@ export default function AeroReps({ addPoints }) {
             </div>
 
             <div className="flex flex-col items-center gap-4">
-              <button 
+              <button
                 onClick={startGame}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-xl font-black text-xl transition-all border-b-4 border-emerald-800 tracking-wide"
               >
