@@ -1,0 +1,72 @@
+.calendar-wrapper {
+  color: var(--text-primary);
+  width: 100%;
+  max-width: 1200px;
+}
+
+.calendar-container {
+  width: 100%;
+  max-width: 1000px;
+  background: var(--bg-card);
+  padding: 3rem 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.calendar-header h2 {
+  font-weight: 800;
+  font-size: 2rem;
+  margin: 0;
+}
+.calendar-header p {
+  color: var(--text-secondary);
+}
+
+.calendar-grid-monthly {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px; /* Even bigger gap */
+}
+
+.calendar-cell {
+  aspect-ratio: 1/1;
+  width: 100%;
+  border-radius: 8px; /* Rounder */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  font-size: 1rem; /* Bigger numbers */
+}
+
+.calendar-cell:hover {
+  border-color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* Color Mappings */
+.level-missed { background: var(--level-missed); }
+.level-0 { background: var(--level-0); }
+.level-1 { background: var(--level-1); }
+.level-2 { background: var(--level-2); }
+.level-3 { background: var(--level-3); }
+.level-4 { background: var(--level-4); }
+
+.calendar-legend .calendar-cell {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  color: white;
+}
+
+.calendar-cell-empty {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.calendar-legend .calendar-cell:hover {
+  transform: none;
+  border-color: var(--border);
+}

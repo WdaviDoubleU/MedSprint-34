@@ -1,0 +1,8 @@
+ol, ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; color: inherit; font: inherit; }
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  box-shadow: none !important;
+}
+
