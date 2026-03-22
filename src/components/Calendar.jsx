@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { format, subDays, startOfDay, startOfMonth, endOfMonth, eachDayOfInterval, isPast, isToday, getDay, getDate } from 'date-fns';
-import { Activity } from 'lucide-react';
-import { clsx } from 'clsx';
+import { useState, useRef } from 'react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isPast, isToday, getDay, getDate } from 'date-fns';
+import { Activity, ChevronDown } from 'lucide-react';
 import './Calendar.css';
 
 export default function Calendar({ data, onDayClick }) {
   const [selectedYear, setSelectedYear] = useState('2026');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const isExample = selectedYear === 'Example';
 
   const getPointsClass = (points, date) => {
@@ -72,32 +73,72 @@ export default function Calendar({ data, onDayClick }) {
   
   return (
     <div className="calendar-wrapper flat-panel animate-fade-in p-6">
-      <div className="calendar-header mb-6 flex justify-between items-center">
+      <div className="calendar-header mb-6 flex flex-wrap justify-between items-start gap-4">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Activity className="text-emerald-400" size={24} />
+            <Activity className="text-blue-500" size={24} />
             Exercise Frequency
           </h2>
           <p className="text-secondary mt-1 text-sm">Track your daily intensity for the selected year.</p>
         </div>
         
-        <div className="year-selector flex items-center gap-3">
-          <label htmlFor="year-select" className="text-sm font-bold text-slate-400 uppercase tracking-widest">Year:</label>
-          <select 
-            id="year-select"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-slate-800 border-none text-white font-bold py-2 px-4 rounded-lg focus:ring-2 focus:ring-emerald-500 transition-all outline-none"
+        <div className="year-selector flex items-center gap-3 self-center">
+          <label className="text-sm font-bold text-slate-400 uppercase tracking-widest">Year:</label>
+
+          {/* Custom themed dropdown */}
+          <div
+            ref={dropdownRef}
+            className="relative"
+            onBlur={(e) => {
+              // Close if focus leaves the entire dropdown widget
+              if (!dropdownRef.current?.contains(e.relatedTarget)) setDropdownOpen(false);
+            }}
           >
-            {years.map(y => <option key={y} value={y}>{y}</option>)}
-          </select>
+            <button
+              onClick={() => setDropdownOpen(o => !o)}
+              className="flex items-center gap-2 bg-white border-2 border-slate-200 text-slate-900 font-bold py-2 pl-4 pr-3 rounded-xl transition-all hover:border-blue-400 focus:outline-none focus:border-blue-500"
+              aria-haspopup="listbox"
+              aria-expanded={dropdownOpen}
+            >
+              <span>{selectedYear}</span>
+              <ChevronDown
+                size={16}
+                className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-white border-2 border-slate-200 rounded-xl overflow-hidden z-50 min-w-[120px]">
+                {years.map(y => (
+                  <button
+                    key={y}
+                    tabIndex={0}
+                    onClick={() => { setSelectedYear(y); setDropdownOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center justify-between gap-2 ${
+                      selectedYear === y
+                        ? 'bg-blue-600 text-white'
+                        : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'
+                    }`}
+                  >
+                    {y}
+                    {y === 'Example' && selectedYear !== y && (
+                      <span className="text-[9px] bg-blue-100 text-blue-600 font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full">Demo</span>
+                    )}
+                    {y === 'Example' && selectedYear === y && (
+                      <span className="text-[9px] bg-white/20 text-white font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full">Demo</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
       <div className="calendar-months-container grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
         {monthlyData.map((month) => (
           <div key={month.name} className="month-section animate-fade-in">
-            <h3 className="text-lg font-bold mb-4 text-emerald-400">{month.name}</h3>
+            <h3 className="text-lg font-bold mb-4 text-blue-500">{month.name}</h3>
             
             <div className="weekday-header grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-slate-500">
               {WEEKDAYS.map((day, idx) => <span key={idx}>{day}</span>)}

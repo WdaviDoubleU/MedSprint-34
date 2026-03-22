@@ -75,10 +75,10 @@ export default function RepGotchi({ addPoints }) {
     satRef.current = newSat;
     setPetState('eating');
 
-    // Pulse the video brightness
+    // Restart video from beginning on every rep
     if (videoRef.current) {
-      videoRef.current.style.filter = 'brightness(1.4)';
-      setTimeout(() => { if (videoRef.current) videoRef.current.style.filter = ''; }, 300);
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
     }
 
     if (animRef.current) clearTimeout(animRef.current);
@@ -130,7 +130,7 @@ export default function RepGotchi({ addPoints }) {
             Rep-o-gotchi <Zap className="text-yellow-500 fill-yellow-500" size={20} />
           </h2>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
-            Status: <span className={petState === 'hungry' ? 'text-red-500' : petState === 'eating' ? 'text-emerald-500' : 'text-slate-400'}>{petState}</span>
+            Status: <span className={petState === 'hungry' ? 'text-red-500' : petState === 'eating' ? 'text-blue-500' : 'text-slate-400'}>{petState}</span>
           </p>
         </div>
         <div className="text-right">
@@ -147,16 +147,18 @@ export default function RepGotchi({ addPoints }) {
         />
       </div>
 
-      {/* Video pet window */}
-      <div className={`relative rounded-2xl overflow-hidden border-4 mb-8 transition-all ${
-        petState === 'hungry' ? 'border-red-400' : petState === 'eating' ? 'border-emerald-400 scale-105' : 'border-slate-900'
-      }`} style={{ width: 260, height: 180 }}>
+      {/* Video pet window — natural 16:9 aspect ratio, no clipping */}
+      <div
+        className={`relative w-full max-w-sm rounded-2xl overflow-hidden border-4 mb-8 transition-all ${
+          petState === 'hungry' ? 'border-red-400' : petState === 'eating' ? 'border-blue-400 scale-105' : 'border-slate-900'
+        }`}
+        style={{ aspectRatio: '16/9' }}
+      >
         <video
           ref={videoRef}
           src="/teams-video.mp4"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain bg-black"
           muted
-          loop
           playsInline
           preload="auto"
         />
@@ -166,10 +168,10 @@ export default function RepGotchi({ addPoints }) {
           <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse pointer-events-none" />
         )}
         {petState === 'eating' && (
-          <div className="absolute inset-0 bg-emerald-400 opacity-20 pointer-events-none" />
+          <div className="absolute inset-0 bg-blue-400 opacity-20 pointer-events-none" />
         )}
 
-        {/* Hunger icon */}
+        {/* State icon */}
         {petState === 'hungry' && (
           <div className="absolute top-2 right-2 bg-white rounded-full p-1 animate-bounce">
             <span className="text-lg">🍽️</span>
@@ -217,7 +219,7 @@ export default function RepGotchi({ addPoints }) {
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={handleRep}
-            className="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-16 py-5 rounded-2xl font-black text-2xl transition-all uppercase tracking-wide select-none"
+            className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-16 py-5 rounded-2xl font-black text-2xl transition-all uppercase tracking-wide select-none"
           >
             <Heart className="inline mr-2 fill-white" size={24} /> Feed!
           </button>

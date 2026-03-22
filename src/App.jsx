@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useExerciseData } from './hooks/useExerciseData';
+import { Home as HomeIcon, Dumbbell, CalendarDays, Trophy } from 'lucide-react';
 import Calendar from './components/Calendar';
 import DayModal from './components/DayModal';
 import StartExercise from './components/StartExercise';
@@ -28,26 +29,27 @@ function App() {
   };
 
   const NAV_TABS = [
-    { id: 'home', label: '⌂ Home' },
-    { id: 'start_exercise', label: 'Start Exercise' },
-    { id: 'calendar', label: 'Calendar' },
-    { id: 'leaderboard', label: 'Leaderboard' },
+    { id: 'home',           label: 'Home',          Icon: HomeIcon },
+    { id: 'start_exercise', label: 'Start Exercise', Icon: Dumbbell },
+    { id: 'calendar',       label: 'Calendar',       Icon: CalendarDays },
+    { id: 'leaderboard',   label: 'Leaderboard',    Icon: Trophy },
   ];
 
   return (
     <div className="app-container w-full flex flex-col min-h-screen">
       {/* Nav bar — hidden on home screen to let the big landing breathe */}
       {activeTab !== 'home' && (
-        <nav className="w-full flex justify-center gap-3 px-6 py-4 border-b border-slate-100 bg-white sticky top-0 z-50">
-          {NAV_TABS.map(({ id, label }) => (
+        <nav className="w-full flex justify-center gap-3 px-8 py-5 border-b-2 border-slate-100 bg-white sticky top-0 z-50">
+          {NAV_TABS.map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`px-5 py-2 rounded-lg font-bold transition-all border-2 text-sm ${activeTab === id
-                ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all border-2 text-sm ${activeTab === id
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
                 }`}
             >
+              <Icon size={16} />
               {label}
             </button>
           ))}

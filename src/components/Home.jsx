@@ -78,24 +78,24 @@ const TILES = [
     label: 'Start Exercise',
     sub: 'Play a game, earn reps',
     Icon: Dumbbell,
-    accent: '#059669',
-    light: '#d1fae5',
+    accent: '#2563eb',
+    light: '#dbeafe',
   },
   {
     id: 'calendar',
     label: 'Calendar',
     sub: 'Track your daily intensity',
     Icon: Calendar,
-    accent: '#0284c7',
-    light: '#dbeafe',
+    accent: '#0369a1',
+    light: '#e0f2fe',
   },
   {
     id: 'leaderboard',
     label: 'Leaderboard',
     sub: 'See the community rankings',
     Icon: Trophy,
-    accent: '#d97706',
-    light: '#fef3c7',
+    accent: '#1d4ed8',
+    light: '#eff6ff',
   },
 ];
 
@@ -111,31 +111,36 @@ export default function Home({ onNavigate }) {
         aria-hidden="true"
       >
         {/* Top-left fan */}
-        <FanArc cx={0} cy={0} maxR={420} slices={7} baseColor="#bbf7d0" startDeg={0} endDeg={95} />
+        <FanArc cx={0}    cy={0}    maxR={520} slices={9} baseColor="#bfdbfe" startDeg={0}   endDeg={100} />
         {/* Top-right fan */}
-        <FanArc cx={1200} cy={0} maxR={380} slices={7} baseColor="#a7f3d0" startDeg={85} endDeg={185} />
+        <FanArc cx={1200} cy={0}    maxR={480} slices={9} baseColor="#93c5fd" startDeg={80}  endDeg={185} />
         {/* Bottom-left fan */}
-        <FanArc cx={0} cy={800} maxR={340} slices={6} baseColor="#d1fae5" startDeg={-10} endDeg={80} />
+        <FanArc cx={0}    cy={800}  maxR={440} slices={8} baseColor="#dbeafe" startDeg={-15} endDeg={85}  />
         {/* Bottom-right fan */}
-        <FanArc cx={1200} cy={800} maxR={380} slices={6} baseColor="#bbf7d0" startDeg={95} endDeg={190} />
+        <FanArc cx={1200} cy={800}  maxR={480} slices={8} baseColor="#bfdbfe" startDeg={90}  endDeg={195} />
         {/* Center-bottom subtle fan */}
-        <FanArc cx={600} cy={900} maxR={320} slices={5} baseColor="#ecfdf5" startDeg={195} endDeg={345} />
+        <FanArc cx={600}  cy={950}  maxR={420} slices={6} baseColor="#eff6ff" startDeg={190} endDeg={350} />
+        {/* Center-top subtle fan */}
+        <FanArc cx={600}  cy={-100} maxR={380} slices={6} baseColor="#eff6ff" startDeg={10}  endDeg={170} />
       </svg>
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center w-full max-w-4xl">
-        {/* Logo / Title */}
+        {/* Animated GIF logo */}
         <div className="flex items-center gap-4 mb-4 animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500 flex items-center justify-center">
-            <Activity className="text-white" size={36} />
-          </div>
+          <img
+            src="/logo.gif"
+            alt="Fan of Exercise logo"
+            className="w-24 h-24 object-contain"
+            onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+          />
         </div>
 
         <h1
           className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter text-center leading-none mb-4 animate-fade-in"
           style={{ animationDelay: '0.05s' }}
         >
-          Fan of <span className="text-emerald-500">Exercise</span>
+          Fan of <span className="text-blue-600">Exercise</span>
         </h1>
 
         <p

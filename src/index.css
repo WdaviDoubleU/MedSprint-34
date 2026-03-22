@@ -24,8 +24,12 @@
   box-shadow: none !important;
   --tw-shadow: 0 0 #0000 !important;
   --tw-shadow-colored: 0 0 #0000 !important;
-  filter: none !important;
   backdrop-filter: none !important;
+}
+
+/* Allow filters on img/video so GIFs and videos render correctly */
+*:not(img):not(video) {
+  filter: none !important;
 }
 
 body {
@@ -35,7 +39,7 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 /* Flat Design Utilities */
