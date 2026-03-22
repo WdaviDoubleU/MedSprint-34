@@ -37,9 +37,14 @@ body {
   background: var(--bg-main);
   color: var(--text-primary);
   min-height: 100vh;
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
 }
 
 /* Flat Design Utilities */
@@ -66,7 +71,7 @@ body {
   background: var(--text-secondary);
 }
 
-/* Animations */
+/* Animations — opacity-only variant keeps `transform` free for hover lifts */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -74,4 +79,13 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeInOpacity {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-opacity {
+  animation: fadeInOpacity 0.45s ease-out forwards;
 }

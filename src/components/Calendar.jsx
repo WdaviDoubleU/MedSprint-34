@@ -1,7 +1,47 @@
-import { useState, useRef } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isPast, isToday, getDay, getDate } from 'date-fns';
-import { Activity, ChevronDown } from 'lucide-react';
+import { useState, useRef, useMemo } from 'react';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isPast,
+  isToday,
+  getDay,
+  getDate,
+  subDays,
+  startOfDay,
+} from 'date-fns';
+import { Activity, ChevronDown, Mail, Share2, Copy, Flame } from 'lucide-react';
 import './Calendar.css';
+
+const GOLD_MIN = 30;
+
+function streakFromToday(data, isExample, getExamplePoints, predicate) {
+  let d = startOfDay(new Date());
+  let count = 0;
+  for (let i = 0; i < 4000; i++) {
+    const raw = isExample ? getExamplePoints(d) : (data[format(d, 'yyyy-MM-dd')] ?? 0);
+    const pts = Math.max(0, raw);
+    if (!predicate(pts)) break;
+    count += 1;
+    d = subDays(d, 1);
+  }
+  return count;
+}
+
+function buildBragMessage(normalStreak, goldStreak) {
+  return [
+    'Fan of Exercise — streak update',
+    '',
+    `I am crushing my consistency: ${normalStreak} day${normalStreak === 1 ? '' : 's'} in a row with any exercise logged.`,
+    '',
+    `Gold streak (light green or better, ${GOLD_MIN}+ points): ${goldStreak} day${goldStreak === 1 ? '' : 's'} in a row.`,
+    '',
+    'If you are still deciding whether to move today — this is your sign. Come chase the calendar with me.',
+    '',
+    'Sent from Fan of Exercise.',
+  ].join('\n');
+}
 
 export default function Calendar({ data, onDayClick }) {
   const [selectedYear, setSelectedYear] = useState('2026');
@@ -67,10 +107,56 @@ export default function Calendar({ data, onDayClick }) {
 
   const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   const monthlyData = generateMonthlyData();
-  
-  // Calculate offset to align the grid column start day based on weekday
-  // By default we render columns of 7 descending rows
-  
+
+  const normalStreak = useMemo(
+    () => streakFromToday(data, isExample, getExamplePoints, (p) => p > 0),
+    [data, isExample]
+  );
+  const goldStreak = useMemo(
+    () => streakFromToday(data, isExample, getExamplePoints, (p) => p >= GOLD_MIN),
+    [data, isExample]
+  );
+
+  const bragBody = useMemo(
+    () => buildBragMessage(normalStreak, goldStreak),
+    [normalStreak, goldStreak]
+  );
+
+  const mailtoHref = useMemo(() => {
+    const subject = encodeURIComponent('My Fan of Exercise streaks — can you beat this?');
+    const body = encodeURIComponent(bragBody);
+    return `mailto:?subject=${subject}&body=${body}`;
+  }, [bragBody]);
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Fan of Exercise streaks',
+          text: bragBody,
+        });
+        return;
+      }
+    } catch {
+      /* user cancelled or share failed */
+    }
+    try {
+      await navigator.clipboard.writeText(bragBody);
+      alert('Streak message copied to clipboard.');
+    } catch {
+      alert('Could not share or copy. Try the Email button instead.');
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(bragBody);
+      alert('Streak message copied to clipboard.');
+    } catch {
+      alert('Copy failed.');
+    }
+  };
+
   return (
     <div className="calendar-wrapper flat-panel animate-fade-in p-6">
       <div className="calendar-header mb-6 flex flex-wrap justify-between items-start gap-4">
@@ -80,6 +166,50 @@ export default function Calendar({ data, onDayClick }) {
             Exercise Frequency
           </h2>
           <p className="text-secondary mt-1 text-sm">Track your daily intensity for the selected year.</p>
+
+          <div className="streak-strip mt-6 flex flex-wrap items-stretch gap-4">
+            <div className="flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 min-w-[140px]">
+              <Flame className="text-orange-500 shrink-0" size={28} />
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Streak</p>
+                <p className="text-2xl font-black text-slate-900 leading-none">{normalStreak}</p>
+                <p className="text-xs text-slate-500 font-medium mt-1">Any exercise</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-2xl border-2 border-amber-200 bg-amber-50 px-4 py-3 min-w-[140px]">
+              <span className="text-2xl shrink-0" aria-hidden>🏆</span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-amber-700">Gold streak</p>
+                <p className="text-2xl font-black text-slate-900 leading-none">{goldStreak}</p>
+                <p className="text-xs text-slate-600 font-medium mt-1">{GOLD_MIN}+ pts (light green+)</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700 transition-colors"
+              >
+                <Share2 size={16} />
+                Share
+              </button>
+              <a
+                href={mailtoHref}
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700 transition-colors"
+              >
+                <Mail size={16} />
+                Email
+              </a>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700 transition-colors"
+              >
+                <Copy size={16} />
+                Copy
+              </button>
+            </div>
+          </div>
         </div>
         
         <div className="year-selector flex items-center gap-3 self-center">
@@ -159,10 +289,11 @@ export default function Calendar({ data, onDayClick }) {
                 return (
                   <button
                     key={dateStr}
-                    onClick={() => onDayClick(date, points)}
+                    type="button"
+                    onClick={() => onDayClick(date, rawPoints, isExample)}
                     className={`calendar-cell ${pointClass} flex items-center justify-center text-[10px] font-bold transition-transform hover:scale-110 hover:z-10`}
-                    title={`${dateStr} - Points: ${points}`}
-                    aria-label={`Log exercise for ${dateStr}`}
+                    title={`${dateStr} — ${rawPoints < 0 ? 'Missed' : `${points} pts`}`}
+                    aria-label={`View stats for ${dateStr}`}
                   >
                     {getDate(date)}
                   </button>

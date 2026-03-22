@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Activity } from 'lucide-react';
 import JumpGame from './JumpGame';
 import AeroReps from './AeroReps';
 import RepGotchi from './RepGotchi';
@@ -8,9 +7,24 @@ export default function StartExercise({ addPoints }) {
   const [selectedGame, setSelectedGame] = useState(null);
 
   const games = [
-    { id: 'jump', title: 'Running Challenge', desc: 'Jump over abstract obstacles to the beat of your reps.' },
-    { id: 'aero', title: 'Aero Reps', desc: 'Control your altitude. Each successful pass is a rep.' },
-    { id: 'gotchi', title: 'Rep-o-gotchi', desc: 'Feed your virtual pet with calories from your reps.' },
+    {
+      id: 'jump',
+      title: 'Running Challenge',
+      desc: 'Jump over abstract obstacles to the beat of your reps.',
+      thumb: '/thumb-aero.png',
+    },
+    {
+      id: 'aero',
+      title: 'Aero Reps',
+      desc: 'Control your altitude. Each successful pass is a rep.',
+      thumb: '/thumb-jump.png',
+    },
+    {
+      id: 'gotchi',
+      title: 'Rep-o-gotchi',
+      desc: 'Feed your virtual pet with calories from your reps.',
+      thumb: '/thumb-gotchi.png',
+    },
   ];
 
   if (selectedGame === 'jump') {
@@ -69,8 +83,12 @@ export default function StartExercise({ addPoints }) {
             }}
             className="p-5 rounded-2xl border-2 border-slate-100 bg-white flex flex-col items-center hover:border-emerald-500 transition-all cursor-pointer group"
           >
-            <div className="w-full h-36 bg-slate-50 rounded-xl mb-4 flex items-center justify-center text-slate-300 border border-slate-100">
-              <Activity className="text-slate-200 group-hover:text-emerald-400 transition-colors" size={48} />
+            <div className="w-full h-36 rounded-xl mb-4 border border-slate-100 overflow-hidden bg-slate-100">
+              <img
+                src={game.thumb}
+                alt={game.title}
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-200"
+              />
             </div>
             <h3 className="font-bold text-xl text-slate-900">{game.title}</h3>
             <p className="text-sm text-slate-500 mt-2 text-center leading-relaxed">{game.desc}</p>
